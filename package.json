@@ -1,0 +1,90 @@
+{
+  "name": "@groundmail/groundhog",
+  "version": "0.1.0",
+  "description": "A local email inbox for development. Catches SMTP and the HTTP send APIs of Groundmail, SendGrid, Postmark, Mailgun, Resend and Amazon SES. Nothing leaves your machine.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "groundhog": "dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Groundmail/groundhog.git"
+  },
+  "homepage": "https://github.com/Groundmail/groundhog#readme",
+  "bugs": {
+    "url": "https://github.com/Groundmail/groundhog/issues"
+  },
+  "author": "Groundmail <hello@groundmail.dev>",
+  "keywords": [
+    "email",
+    "smtp",
+    "mailhog",
+    "mailpit",
+    "local",
+    "development",
+    "testing",
+    "inbox",
+    "mock",
+    "sendgrid",
+    "postmark",
+    "mailgun",
+    "resend",
+    "ses",
+    "mcp",
+    "playwright"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p . && cp -R src/ui dist/ui && chmod +x dist/cli.js",
+    "dev": "npm run build && node dist/cli.js",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit -p .",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "busboy": "^1.6.0",
+    "mailparser": "^3.10.0",
+    "nodemailer": "^10.1.7",
+    "smtp-server": "^3.20.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-ses": "^3.1154.0",
+    "@aws-sdk/client-sesv2": "^3.1154.0",
+    "@playwright/test": "^1.64.1",
+    "@sendgrid/eventwebhook": "^8.0.0",
+    "@sendgrid/mail": "^8.1.6",
+    "@types/busboy": "^1.5.5",
+    "@types/mailparser": "^3.9.0",
+    "@types/node": "^22.20.5",
+    "@types/nodemailer": "^8.0.2",
+    "@types/smtp-server": "^3.5.13",
+    "form-data": "^4.0.6",
+    "groundmail": "^0.25.1",
+    "mailgun.js": "^14.1.0",
+    "postmark": "^5.1.0",
+    "resend": "^6.34.1",
+    "svix": "^2.8.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.5"
+  }
+}

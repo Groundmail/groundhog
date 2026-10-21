@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Groundhog</title>
+<meta name="description" content="Groundhog: a local email inbox for development, from Groundmail.">
+<link rel="icon" href="/ui/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/ui/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true"><rect width="40" height="40" rx="8" fill="#8b5a33"/><ellipse cx="20" cy="33" rx="14" ry="3.5" fill="#1f1811"/><path d="M10 33 C10 18 14 11 20 11 C26 11 30 18 30 33 Z" fill="#e8c9a0"/><circle cx="16.5" cy="19" r="1.8" fill="#241c15"/><circle cx="23.5" cy="19" r="1.8" fill="#241c15"/><ellipse cx="20" cy="23" rx="2" ry="1.4" fill="#241c15"/></svg>
+      <span class="brand-name">Groundhog</span>
+      <span class="brand-from">from <a data-utm="header" href="https://groundmail.dev/?utm_source=groundhog&amp;utm_medium=app&amp;utm_campaign=header" target="_blank" rel="noopener">Groundmail</a></span>
+    </div>
+    <div class="top-right">
+      <span class="pill" id="pill-smtp"><span class="dot"></span><span>SMTP :1025</span></span>
+      <span class="pill" id="pill-api"><span class="dot"></span><span>API :3025</span></span>
+      <button type="button" class="btn" id="btn-faults" aria-haspopup="dialog">Failure mode</button>
+      <button type="button" class="btn" id="btn-golive" aria-haspopup="dialog">Go live on Groundmail</button>
+    </div>
+  </header>
+
+  <div class="banner" id="fault-banner" role="status" hidden>
+    <span class="dot"></span>
+    <span id="fault-banner-text"></span>
+    <button type="button" class="btn small" id="fault-off">Turn off</button>
+  </div>
+
+  <div class="main" id="main">
+    <aside class="list" aria-label="Caught emails" id="list" hidden>
+      <div class="list-tools">
+        <label for="search" class="sr-only">Search emails</label>
+        <input id="search" class="input" type="search" placeholder="Search to, subject, text" autocomplete="off">
+        <button type="button" class="btn solid" id="btn-clear">Clear</button>
+      </div>
+      <div class="list-count" id="list-count" aria-live="polite"></div>
+      <div class="rows" id="rows" role="listbox" aria-label="Emails"></div>
+    </aside>
+    <section class="view" id="view" aria-label="Email" hidden></section>
+    <section class="empty" id="empty" aria-label="Waiting for email" hidden></section>
+  </div>
+
+  <footer class="foot">
+    <span>Groundhog <span id="version"></span> · open source, MIT · <a href="https://github.com/Groundmail/groundhog" target="_blank" rel="noopener">GitHub</a></span>
+    <span>Ready for real inboxes? <a data-utm="footer" href="https://groundmail.dev/?utm_source=groundhog&amp;utm_medium=app&amp;utm_campaign=footer" target="_blank" rel="noopener">Groundmail</a> sends your app's email for real.</span>
+  </footer>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<dialog id="dlg-golive" aria-labelledby="golive-title">
+  <svg class="dialog-art" viewBox="0 0 720 150" aria-hidden="true">
+    <rect x="0" y="112" width="720" height="10" fill="#4a3a29"/><rect x="0" y="122" width="720" height="10" fill="#3a2d20"/><rect x="0" y="132" width="720" height="18" fill="#2c2218"/>
+    <ellipse cx="200" cy="114" rx="70" ry="12" fill="#0d0a07"/>
+    <path d="M160 114 C160 84 176 70 200 70 C224 70 240 84 240 114 Z" fill="#8b5a33"/>
+    <circle cx="190" cy="88" r="3.5" fill="#241c15"/><circle cx="210" cy="88" r="3.5" fill="#241c15"/><ellipse cx="200" cy="97" rx="4" ry="3" fill="#241c15"/>
+    <path d="M244 92 C330 40 420 40 500 70" fill="none" stroke="#7d6e5f" stroke-width="2" stroke-dasharray="4 6"/>
+    <g transform="rotate(12 520 70)"><rect x="496" y="54" width="48" height="32" rx="4" fill="#fbf8f1"/><path d="M497 56 L520 72 L543 56" fill="none" stroke="#a3461f" stroke-width="2.5"/></g>
+    <path d="M556 62 l14 -6 M558 74 l16 0 M556 86 l14 6" stroke="#e27d4e" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+  <div class="dialog-body">
+    <div>
+      <h1 id="golive-title">Ready for real inboxes?</h1>
+      <p class="dialog-lede">Groundmail sends your app's email for real: an HTTP API and SMTP, with transactional mail on its own servers and IPs. Keep Groundhog for local dev; it stays free and open source.</p>
+    </div>
+    <ol class="steps">
+      <li><span class="step-n">1</span><span class="step-t"><strong>Create a free account</strong><span>3,000 emails a month on the free plan. A card is needed to send, and Free is never charged.</span></span></li>
+      <li><span class="step-n">2</span><span class="step-t"><strong>Verify your sending domain</strong><span>One click on Cloudflare, GoDaddy or Vercel. Everything else gets the records to copy.</span></span></li>
+      <li><span class="step-n">3</span><span class="step-t"><strong>Send with SMTP or the API</strong>
+        <span class="codeblock"><pre><span style="color:#9b8a76"># production .env</span>
+SMTP_HOST=smtp.groundmail.dev   <span style="color:#9b8a76"># or the SDK:</span>
+GROUNDMAIL_API_KEY=gm_live_…</pre></span></span></li>
+    </ol>
+    <div class="dialog-foot">
+      <button type="button" class="linkish" data-close>Not yet, back to the inbox</button>
+      <a class="btn primary" data-utm="go_live" href="https://app.groundmail.dev/signup?utm_source=groundhog&amp;utm_medium=app&amp;utm_campaign=go_live" target="_blank" rel="noopener">Start free on Groundmail</a>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlg-faults" aria-labelledby="faults-title">
+  <div class="dialog-body">
+    <div>
+      <h1 id="faults-title">Failure mode</h1>
+      <p class="dialog-lede">Make the next sends fail the way real providers fail, so your error handling actually runs. Works on every provider API and on SMTP, which answers with the matching SMTP reply.</p>
+    </div>
+    <div class="faults" id="fault-options" role="radiogroup" aria-label="How sends fail"></div>
+    <div class="field-row">
+      <label for="fault-next" class="label">Next</label>
+      <input id="fault-next" class="input" type="number" min="1" max="1000" value="3" style="flex:0 0 90px">
+      <span class="label">sends fail</span>
+    </div>
+    <div class="codeblock"><pre><span style="color:#9b8a76"># or from a test</span>
+curl -X POST <span id="fault-curl-url">http://localhost:3025</span>/api/faults -d '{"status":429,"next":3}'</pre></div>
+    <div class="dialog-foot">
+      <button type="button" class="linkish" data-close>Cancel</button>
+      <button type="button" class="btn primary" id="fault-on">Turn on failure mode</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="/ui/app.js" type="module"></script>
+</body>
+</html>

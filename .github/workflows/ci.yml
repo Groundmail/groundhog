@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm test
+
+  node20:
+    name: Runs on Node 20
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci && npm run build
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Start the CLI and catch an email over SMTP and HTTP
+        run: |
+          node --version
+          node dist/cli.js --no-open &
+          for i in $(seq 1 30); do curl -sf localhost:3025/api/health && break; sleep 0.5; done
+          node -e "require('nodemailer').createTransport({host:'localhost',port:1025}).sendMail({from:'a@acme.test',to:'ci@example.com',subject:'Node 20',text:'code 123456'}).then(i=>console.log(i.response))"
+          curl -sf -X POST localhost:3025/emails -H 'Content-Type: application/json' -d '{"from":"a@acme.test","to":"ci@example.com","subject":"HTTP","text":"hi"}'
+          curl -sf "localhost:3025/api/wait?to=ci@example.com&subject=Node%2020&timeout=5000" | grep -q '"code":"123456"'
+
+  e2e:
+    name: Playwright (UI + example)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: test-results
+          retention-days: 7
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker build -t groundhog:ci .
+      - name: Run it and catch an email
+        run: |
+          docker run -d --name gh -p 1025:1025 -p 3025:3025 groundhog:ci
+          for i in $(seq 1 30); do curl -sf localhost:3025/api/health && break; sleep 1; done
+          curl -sf -X POST localhost:3025/groundmail/emails -H 'Content-Type: application/json' -d '{"from":"a@acme.test","to":"docker@example.com","subject":"Docker","text":"hi"}'
+          curl -sf "localhost:3025/api/emails/latest?to=docker@example.com" | grep -q '"subject":"Docker"'
+          docker logs gh

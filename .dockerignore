@@ -1,0 +1,10 @@
+node_modules
+dist
+test
+e2e
+examples
+.git
+.github
+*.md
+test-results
+playwright-report
