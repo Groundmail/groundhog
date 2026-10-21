@@ -50,10 +50,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           # Trusted publishing needs npm 11.5.1 or newer.
+          # No registry-url: it writes an .npmrc with a placeholder token, and npm then
+          # publishes with that token instead of trusted publishing (OIDC).
           node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
           cache: npm
-      - run: npm install -g npm@latest
+      - run: npm install -g npm@latest && npm --version
       - run: npm ci
       - run: npm run build
       - run: npm test
