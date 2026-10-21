@@ -314,6 +314,9 @@ npx playwright install chromium
 npm run test:e2e                 # the inbox UI and the Playwright example
 ```
 
+Releases are automatic: bump `version` in `package.json` and merge to `main`. The release
+workflow publishes to npm (with provenance), tags the version, and pushes the Docker image.
+
 Issues and pull requests are welcome.
 
 ## License

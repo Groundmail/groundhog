@@ -1,24 +1,81 @@
-# On a version tag (v0.1.0): build and push the Docker image to GitHub Container Registry
-# (ghcr.io/groundmail/groundhog) and, when Docker Hub credentials are set, to Docker Hub
-# (groundmail/groundhog). The npm package is published from the Groundmail monorepo's
-# "Publish Groundhog" workflow, which holds the npm credentials.
+# Releases are automatic: bump "version" in package.json and merge to main.
+# When that version isn't on npm yet, this publishes @groundmail/groundhog (npm trusted
+# publishing over OIDC, so no npm token is stored anywhere, with provenance), tags vX.Y.Z,
+# creates a GitHub release, and pushes the Docker image to ghcr.io/groundmail/groundhog
+# (and Docker Hub as groundmail/groundhog when DOCKERHUB_* secrets are set).
 
 name: Release
 
 on:
   push:
-    tags: ['v*']
+    branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 permissions:
-  contents: read
+  contents: write
+  id-token: write
   packages: write
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.version.outputs.release }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: version
+        run: |
+          set -euo pipefail
+          version="$(node -p "require('./package.json').version")"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          if npm view "@groundmail/groundhog@${version}" version --prefer-online >/dev/null 2>&1; then
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::@groundmail/groundhog@${version} is already on npm; nothing to release."
+          else
+            echo "release=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Releasing @groundmail/groundhog@${version}"
+          fi
+
+  npm:
+    needs: check
+    if: needs.check.outputs.release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          # Trusted publishing needs npm 11.5.1 or newer.
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+      - run: npm install -g npm@latest
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm publish --access public
+      - name: Tag and GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          set -euo pipefail
+          if ! git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}" >/dev/null; then
+            git tag "v${VERSION}"
+            git push origin "v${VERSION}"
+          fi
+          gh release view "v${VERSION}" >/dev/null 2>&1 || gh release create "v${VERSION}" --title "v${VERSION}" --generate-notes
+
   docker:
+    needs: [check, npm]
     runs-on: ubuntu-latest
     env:
       HAS_DOCKERHUB: ${{ secrets.DOCKERHUB_TOKEN != '' }}
+      VERSION: ${{ needs.check.outputs.version }}
     steps:
       - uses: actions/checkout@v5
       - uses: docker/setup-qemu-action@v3
@@ -40,10 +97,9 @@ jobs:
             ghcr.io/groundmail/groundhog
             ${{ env.HAS_DOCKERHUB == 'true' && 'docker.io/groundmail/groundhog' || '' }}
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
-            type=sha
+            type=semver,pattern={{version}},value=v${{ env.VERSION }}
+            type=semver,pattern={{major}}.{{minor}},value=v${{ env.VERSION }}
+            type=raw,value=latest
       - uses: docker/build-push-action@v6
         with:
           context: .
