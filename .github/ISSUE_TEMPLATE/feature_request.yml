@@ -1,0 +1,20 @@
+name: Feature request
+description: A provider, endpoint or inbox feature you'd like
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What you're trying to do
+      description: The workflow or test you can't do today.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help
+      description: For a new provider or endpoint, link its API docs and name the SDK you use.
+  - type: textarea
+    id: else
+    attributes:
+      label: Anything else

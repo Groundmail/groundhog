@@ -23,6 +23,10 @@ email it sends shows up at `http://localhost:3025`: sign-up codes, password rese
 - **For tests and agents**: `waitForEmail()` for Playwright/Vitest, and an MCP server so coding
   agents can read the verification email themselves.
 
+<p align="center"><img src="docs/screenshot-inbox.png" width="900" alt="The Groundhog inbox: three caught emails (a Resend sign-up code, an SMTP password reset and a SendGrid receipt), with the verification email open and its one-time code 482913 and confirm link pulled out above the rendered HTML"></p>
+
+<p align="center"><a href="docs/demo.gif">Watch a 15-second demo</a></p>
+
 Coming from MailHog? Groundhog keeps SMTP on 1025; the inbox moves from 8025 to 3025.
 
 ## Start it
@@ -228,6 +232,8 @@ curl -X POST localhost:3025/api/faults -d '{"status":429,"next":3}'
 
 A banner stays in the inbox while failure mode is on. `next: 0` or `DELETE /api/faults` turns it off.
 
+<p align="center"><img src="docs/screenshot-failure-mode.png" width="760" alt="The Failure mode dialog: pick rate limited (429), invalid recipient (422), bad API key (401), provider outage (5xx) or a 30-second timeout, each with its SMTP reply code, and how many sends should fail"></p>
+
 ## Webhook simulation
 
 Set your app's webhook URL in an email's **Webhooks** tab (or `PUT /api/webhooks`), then fire
@@ -317,7 +323,7 @@ npm run test:e2e                 # the inbox UI and the Playwright example
 Releases are automatic: bump `version` in `package.json` and merge to `main`. The release
 workflow publishes to npm (with provenance), tags the version, and pushes the Docker image.
 
-Issues and pull requests are welcome.
+Issues and pull requests are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
