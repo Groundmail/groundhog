@@ -1,0 +1,42 @@
+name: Bug report
+description: Something in Groundhog doesn't work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead. Include error output if there is any.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: The smallest send that shows it (an SMTP config, an SDK call or a curl command).
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Groundhog version
+      description: "`npx @groundmail/groundhog --version`"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How you run it
+      options: [npx, npm dependency (startGroundhog / waitForEmail), Docker, MCP server, From source]
+    validations:
+      required: true
+  - type: input
+    id: sender
+    attributes:
+      label: How your app sends
+      description: For example "SMTP with Nodemailer 6", "@sendgrid/mail 8.1", "Laravel SMTP".
+  - type: input
+    id: env
+    attributes:
+      label: OS and Node version
+      placeholder: macOS 15, Node 22.11

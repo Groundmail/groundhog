@@ -8,3 +8,4 @@ examples
 *.md
 test-results
 playwright-report
+docs

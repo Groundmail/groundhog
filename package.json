@@ -52,7 +52,7 @@
     "playwright"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc -p . && cp -R src/ui dist/ui && chmod +x dist/cli.js",
+    "build": "node scripts/build.mjs clean && tsc -p . && node scripts/build.mjs ui",
     "dev": "npm run build && node dist/cli.js",
     "test": "vitest run",
     "test:e2e": "playwright test",
