@@ -3,7 +3,7 @@
 <h1 align="center">Groundhog</h1>
 
 <p align="center">Catch every email your app sends while you build. Nothing leaves your laptop.<br>
-An open-source local inbox from <a href="https://groundmail.dev/?utm_source=groundhog&utm_medium=readme&utm_campaign=header">Groundmail</a>.</p>
+An open-source local inbox from <a href="https://groundmail.dev/?utm_source=github&utm_medium=readme&utm_campaign=groundhog&utm_content=header">Groundmail</a>.</p>
 
 ---
 
@@ -258,7 +258,7 @@ public; never use them outside local development.
 ## Send to my real inbox
 
 Some things only show up in a real mail client. Open an email, click **Send to my real inbox**,
-and connect a free [Groundmail account](https://app.groundmail.dev/signup?utm_source=groundhog&utm_medium=readme&utm_campaign=real_inbox)
+and connect a free [Groundmail account](https://app.groundmail.dev/signup?utm_source=github&utm_medium=readme&utm_campaign=groundhog&utm_content=real_inbox)
 once. The sign-in opens in your browser; there's no key to paste. Copies come from Groundmail's
 sandbox sender, which only delivers to your own account address until you verify a domain, so
 Groundhog can't email real users by mistake. The sign-in is saved in `~/.config/groundhog` and
@@ -299,7 +299,7 @@ Groundhog never relays mail. Nothing it catches is sent anywhere unless you clic
 
 ## Ready for real inboxes?
 
-When it's time to ship, [Groundmail](https://groundmail.dev/?utm_source=groundhog&utm_medium=readme&utm_campaign=go_live)
+When it's time to ship, [Groundmail](https://groundmail.dev/?utm_source=github&utm_medium=readme&utm_campaign=groundhog&utm_content=go_live)
 sends your app's email for real: an HTTP API and SMTP, with transactional mail on its own servers
 and IPs. The free plan includes 3,000 emails a month. If you use the Groundmail SDK, going live is
 two environment variables:
@@ -308,7 +308,7 @@ two environment variables:
 GROUNDMAIL_API_KEY=gm_live_…   # and drop GROUNDMAIL_BASE_URL
 ```
 
-[Start free on Groundmail →](https://app.groundmail.dev/signup?utm_source=groundhog&utm_medium=readme&utm_campaign=go_live)
+[Start free on Groundmail →](https://app.groundmail.dev/signup?utm_source=github&utm_medium=readme&utm_campaign=groundhog&utm_content=go_live)
 
 ## Development
 
