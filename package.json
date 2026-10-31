@@ -1,6 +1,6 @@
 {
   "name": "@groundmail/groundhog",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A local email inbox for development. Catches SMTP and the HTTP send APIs of Groundmail, SendGrid, Postmark, Mailgun, Resend and Amazon SES. Nothing leaves your machine.",
   "license": "MIT",
   "type": "module",

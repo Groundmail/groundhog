@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/groundhog.svg" width="360" alt="The Groundhog mascot peeking out of its burrow holding an envelope"></p>
+<p align="center"><img src="docs/groundhog.svg" width="360" alt="Groundbot, the robot groundhog, peeking out of its burrow with happy eyes and an envelope on its chest light"></p>
 
 <h1 align="center">Groundhog</h1>
 
