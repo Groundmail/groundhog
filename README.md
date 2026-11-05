@@ -281,6 +281,10 @@ Tools: `list_emails`, `wait_for_email(to, timeout)`, `get_email(id)`, `get_code(
 `get_link(to, contains)` and `simulate_fault(status, next)`. The MCP server uses the Groundhog
 running at `GROUNDHOG_URL` (default `http://localhost:3025`), and starts one itself if none is running.
 
+## Cloud machines
+
+Running agents on cloud machines? See [Groundhog on boxd](docs/boxd.md): one inbox per machine, from a snapshot.
+
 ## Options
 
 | Flag | Env | Default |
