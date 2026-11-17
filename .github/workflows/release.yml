@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: groundbox-4vcpu
     outputs:
       version: ${{ steps.version.outputs.version }}
       release: ${{ steps.version.outputs.release }}
@@ -44,7 +44,7 @@ jobs:
   npm:
     needs: check
     if: needs.check.outputs.release == 'true'
-    runs-on: ubuntu-latest
+    runs-on: groundbox-4vcpu
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
@@ -73,7 +73,7 @@ jobs:
 
   docker:
     needs: [check, npm]
-    runs-on: ubuntu-latest
+    runs-on: groundbox-4vcpu
     env:
       HAS_DOCKERHUB: ${{ secrets.DOCKERHUB_TOKEN != '' }}
       VERSION: ${{ needs.check.outputs.version }}
